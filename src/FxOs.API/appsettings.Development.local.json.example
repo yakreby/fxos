@@ -1,0 +1,12 @@
+{
+  // Bu dosyayi "appsettings.Development.local.json" olarak kopyalayip kendi gercek
+  // degerlerinizle doldurun. Gercek dosya .gitignore'dadir, repoya gitmez.
+  // Program.cs bu dosyayi acikca yukler (optional). Sadece override etmek istediginiz
+  // anahtarlari yazmaniz yeterli; gerisi appsettings.json'dan gelir.
+  "ConnectionStrings": {
+    "DefaultConnection": "Data Source=YOUR_SERVER;Initial Catalog=fxos_;User Id=YOUR_USER;Password=YOUR_PASSWORD;MultipleActiveResultSets=true;TrustServerCertificate=true;"
+  },
+  "Seed": {
+    "AdminPassword": "YOUR_ADMIN_PASSWORD"
+  }
+}

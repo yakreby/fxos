@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- IdentityUser<Guid> / IdentityRole<Guid> temel sınıfları için en hafif Identity paketi.
+         EF Core'a bağımlılık getirmez; Domain temiz kalır. -->
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.11" />
+  </ItemGroup>
+
+</Project>

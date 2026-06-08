@@ -1,0 +1,74 @@
+/* ============================================================
+   FxOs — Temel stiller & fx-* utility çekirdeği
+   Konvansiyon: tüm sınıflar `fx-` prefix'iyle başlar.
+   Örn: fx-flex => display:flex;  (kütüphane Faz 2'de genişleyecek)
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--fx-font-sans);
+  background: var(--fx-bg);
+  color: var(--fx-text);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+a {
+  color: var(--fx-brand);
+  text-decoration: none;
+}
+
+/* ---------- Metin seçimi ---------- */
+::selection {
+  background: var(--fx-brand);
+  color: var(--fx-brand-contrast);
+}
+
+/* ---------- Özel scrollbar (WebKit/Chromium) ---------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--fx-border) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--fx-border);
+  border-radius: 999px;
+  border: 2px solid var(--fx-bg);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--fx-text-muted);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ---------- fx-* utility çekirdeği (seed) ---------- */
+.fx-flex { display: flex; }
+.fx-inline-flex { display: inline-flex; }
+.fx-flex-col { flex-direction: column; }
+.fx-items-center { align-items: center; }
+.fx-justify-center { justify-content: center; }
+.fx-justify-between { justify-content: space-between; }
+.fx-gap-2 { gap: var(--fx-space-2); }
+.fx-gap-4 { gap: var(--fx-space-4); }
+.fx-full { width: 100%; height: 100%; }
+.fx-text-muted { color: var(--fx-text-muted); }
+.fx-text-brand { color: var(--fx-brand); }

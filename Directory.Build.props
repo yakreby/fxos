@@ -1,0 +1,16 @@
+<Project>
+
+  <!-- FxOs — tüm projeler için ortak MSBuild ayarları -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <Authors>Formex</Authors>
+    <Product>FxOs</Product>
+  </PropertyGroup>
+
+</Project>

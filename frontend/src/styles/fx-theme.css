@@ -1,0 +1,75 @@
+/* ============================================================
+   FxOs — Tema değişkenleri (dark / light)
+   Tema, <html data-theme="light|dark"> ile değişir.
+   Tüm fx-* bileşenleri bu değişkenleri kullanır; renk sabiti gömülmez.
+   ============================================================ */
+
+:root {
+  /* Tipografi */
+  --fx-font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --fx-font-mono: ui-monospace, "Cascadia Code", "Fira Code", Consolas, monospace;
+
+  /* Ölçek & yarıçap */
+  --fx-radius-sm: 4px;
+  --fx-radius-md: 8px;
+  --fx-radius-lg: 12px;
+  --fx-space-1: 4px;
+  --fx-space-2: 8px;
+  --fx-space-3: 12px;
+  --fx-space-4: 16px;
+  --fx-space-6: 24px;
+  --fx-space-8: 32px;
+
+  /* Marka rengi (temadan bağımsız) */
+  --fx-brand: #2f8f5b;
+  --fx-brand-strong: #246e46;
+  --fx-brand-contrast: #ffffff;
+}
+
+/* ---------- Light (varsayılan) ---------- */
+:root,
+:root[data-theme="light"] {
+  --fx-bg: #f6f7f9;
+  --fx-surface: #ffffff;
+  --fx-surface-2: #f0f2f5;
+  --fx-border: #e2e5ea;
+  --fx-text: #1b1f24;
+  --fx-text-muted: #5b636e;
+  --fx-shadow: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.06);
+
+  --fx-success: #2f8f5b;
+  --fx-danger: #d23f3f;
+  --fx-warning: #c98a16;
+  --fx-info: #2f6fd2;
+
+  --fx-hover: #eef1f4;
+  --fx-accent-soft: rgba(47, 143, 91, 0.10);
+  --fx-ring: rgba(47, 143, 91, 0.35);
+  --fx-badge-bg: #0c0f14;
+}
+
+/* ---------- Dark ---------- */
+:root[data-theme="dark"] {
+  --fx-bg: #14171c;
+  --fx-surface: #1c2128;
+  --fx-surface-2: #232a33;
+  --fx-border: #2c333d;
+  --fx-text: #e7eaee;
+  --fx-text-muted: #9aa3af;
+  --fx-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+
+  --fx-success: #3aa86c;
+  --fx-danger: #e25555;
+  --fx-warning: #e0a52e;
+  --fx-info: #4f8be8;
+
+  /* Dark temada parlak neon marka (logodaki yeşil) */
+  --fx-brand: #48d736;
+  --fx-brand-strong: #3cc02b;
+  --fx-brand-contrast: #06250a;
+
+  --fx-hover: #232a33;
+  --fx-accent-soft: rgba(72, 215, 54, 0.15);
+  --fx-ring: rgba(72, 215, 54, 0.40);
+  --fx-badge-bg: #0c0f14;
+}

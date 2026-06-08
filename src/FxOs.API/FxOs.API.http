@@ -1,0 +1,6 @@
+@FxOs.API_HostAddress = http://localhost:5137
+
+GET {{FxOs.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

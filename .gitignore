@@ -1,0 +1,72 @@
+# ---------------------------------------------
+# FxOs .gitignore
+# ---------------------------------------------
+
+## .NET / Visual Studio
+bin/
+obj/
+out/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+*.vspscc
+*.vssscc
+project.lock.json
+artifacts/
+
+## Rider / JetBrains
+.idea/
+*.sln.iml
+
+## VS Code (workspace settings tutulmaz, ortak değil)
+.vscode/*
+!.vscode/extensions.json
+
+## Build & test results
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+coverage/
+TestResults/
+
+## EF Core (migrations TUTULUR, sadece geçici dosyalar hariç)
+*.dbmdl
+
+## Logs (Serilog file çıktısı repoda olmaz; src/modules/logs kaynak klasörünü yutmamak için sabitlendi)
+src/FxOs.API/logs/
+*.log
+
+## Yerel dosya depolama (IFileStorage local provider; yüklenen dosyalar repoda olmaz)
+App_Data/
+
+## Secrets & local config
+appsettings.*.local.json
+secrets.json
+*.pfx
+.env
+.env.local
+.env.*.local
+
+## Node / Frontend
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.local
+.eslintcache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+## OS
+.DS_Store
+Thumbs.db
+desktop.ini
