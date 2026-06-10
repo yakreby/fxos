@@ -1,0 +1,188 @@
+/* ---------------- Facility yönetim haritası (Leaflet + CARTO dark) ----------------
+   Gerçek gezilebilir koyu/tech harita; tıkla→nokta ekle. Co-located stil. */
+.fx-lmap-wrap {
+  position: relative;
+  height: 60vh;
+  min-height: 440px;
+  border-radius: var(--fx-radius-lg);
+  overflow: hidden;
+  border: 1px solid rgba(72, 215, 54, 0.18);
+  /* Leaflet pane/kontrolleri yüksek z-index kullanır; tüm harita+overlay'i kendi stacking
+     context'ine hapset ki FxModal (z-index 55, body seviyesi) üstünde kalsın. */
+  isolation: isolate;
+}
+.fx-lmap { width: 100%; height: 100%; background: #0b1410; font-family: var(--fx-font-sans); }
+
+/* Marker noktaları (divIcon) — hafif "canlı" pulse (statik glow + genişleyen halka). */
+.fx-lmark {
+  display: block;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: #48d736;
+  border: 2px solid #08110b;
+  box-shadow: 0 0 7px rgba(72, 215, 54, 0.9);
+}
+.fx-lmark--hq { width: 18px; height: 18px; }
+.fx-lmark--active, .fx-lmark--hq { animation: fx-lmark-pulse-green 2.8s ease-out infinite; }
+.fx-lmark--dist { animation: fx-lmark-pulse-teal 2.8s ease-out infinite; }
+@keyframes fx-lmark-pulse-green {
+  0%   { box-shadow: 0 0 7px rgba(72, 215, 54, 0.9), 0 0 0 0 rgba(72, 215, 54, 0.40); }
+  70%  { box-shadow: 0 0 7px rgba(72, 215, 54, 0.9), 0 0 0 10px rgba(72, 215, 54, 0); }
+  100% { box-shadow: 0 0 7px rgba(72, 215, 54, 0.9), 0 0 0 0 rgba(72, 215, 54, 0); }
+}
+@keyframes fx-lmark-pulse-teal {
+  0%   { box-shadow: 0 0 7px rgba(47, 212, 212, 0.9), 0 0 0 0 rgba(47, 212, 212, 0.40); }
+  70%  { box-shadow: 0 0 7px rgba(47, 212, 212, 0.9), 0 0 0 10px rgba(47, 212, 212, 0); }
+  100% { box-shadow: 0 0 7px rgba(47, 212, 212, 0.9), 0 0 0 0 rgba(47, 212, 212, 0); }
+}
+.fx-lmark--planned {
+  background: transparent;
+  border: 2px dashed #48d736;
+  box-shadow: none;
+  animation: none;
+}
+
+/* Leaflet kontrol/tooltip/popup koyu tema uyumu */
+.fx-lmap .leaflet-control-zoom a {
+  background: #11221a;
+  color: #dfffe9;
+  border-color: rgba(72, 215, 54, 0.25);
+}
+.fx-lmap .leaflet-control-zoom a:hover { background: #173021; }
+.fx-lmap .leaflet-control-attribution {
+  background: rgba(8, 17, 11, 0.7);
+  color: #7e9387;
+}
+.fx-lmap .leaflet-control-attribution a { color: #9fb4a6; }
+.fx-lmap .leaflet-tooltip {
+  background: rgba(8, 17, 11, 0.95);
+  border: 1px solid rgba(72, 215, 54, 0.35);
+  color: #eafff0;
+  font-size: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+}
+.fx-lmap .leaflet-tooltip-top::before { border-top-color: rgba(72, 215, 54, 0.35); }
+
+/* Dağıtım merkezi marker'ı (teal — toplama yeşilinden ayrışsın) */
+.fx-lmark--dist {
+  background: #2fd4d4;
+  box-shadow: 0 0 8px rgba(47, 212, 212, 0.9);
+}
+
+/* ---- Tech-style istatistik popup'ı (hover) ---- */
+.fx-mappop-wrap .leaflet-popup-content-wrapper {
+  background: rgba(8, 17, 11, 0.97);
+  color: #eafff0;
+  border: 1px solid rgba(72, 215, 54, 0.4);
+  border-radius: 12px;
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.6), 0 0 18px rgba(72, 215, 54, 0.12);
+  padding: 0;
+}
+.fx-mappop-wrap .leaflet-popup-content { margin: 0; width: 250px !important; }
+.fx-mappop-wrap .leaflet-popup-tip {
+  background: rgba(8, 17, 11, 0.97);
+  border: 1px solid rgba(72, 215, 54, 0.4);
+}
+.fx-mappop-wrap .leaflet-popup-content-wrapper { animation: fx-mappop-in 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.3); }
+@keyframes fx-mappop-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.92); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.fx-mappop { padding: 12px 13px; font-family: var(--fx-font-sans); }
+.fx-mappop__head { border-bottom: 1px solid rgba(72, 215, 54, 0.18); padding-bottom: 8px; margin-bottom: 9px; }
+.fx-mappop__title { font-size: 14px; font-weight: 800; color: #eafff0; letter-spacing: 0.2px; }
+.fx-mappop__sub { font-size: 11.5px; color: #7ef06a; margin-top: 2px; }
+
+.fx-mappop__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; }
+.fx-mappop__stat { display: flex; flex-direction: column; gap: 1px; }
+.fx-mappop__k { font-size: 10px; color: #7e9387; text-transform: uppercase; letter-spacing: 0.4px; }
+.fx-mappop__v { font-size: 13.5px; font-weight: 700; color: #eafff0; }
+
+.fx-mappop__section { margin-top: 10px; }
+.fx-mappop__plates { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+.fx-mappop__plate {
+  font-family: var(--fx-font-mono);
+  font-size: 11px; font-weight: 600;
+  color: #dfffe9;
+  background: rgba(72, 215, 54, 0.12);
+  border: 1px solid rgba(72, 215, 54, 0.28);
+  border-radius: 4px; padding: 2px 6px;
+  letter-spacing: 0.4px;
+}
+
+.fx-mappop__chart { display: flex; align-items: flex-end; gap: 4px; height: 34px; margin-top: 6px; }
+.fx-mappop__bar {
+  flex: 1;
+  background: linear-gradient(to top, #2f8f5b, #48d736);
+  border-radius: 2px 2px 0 0;
+  min-height: 3px;
+  transform-origin: bottom;
+  animation: fx-mappop-bar 0.5s ease-out backwards;
+}
+.fx-mappop__bar:nth-child(1) { animation-delay: 0.02s; }
+.fx-mappop__bar:nth-child(2) { animation-delay: 0.06s; }
+.fx-mappop__bar:nth-child(3) { animation-delay: 0.10s; }
+.fx-mappop__bar:nth-child(4) { animation-delay: 0.14s; }
+.fx-mappop__bar:nth-child(5) { animation-delay: 0.18s; }
+.fx-mappop__bar:nth-child(6) { animation-delay: 0.22s; }
+.fx-mappop__bar:nth-child(7) { animation-delay: 0.26s; }
+@keyframes fx-mappop-bar { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-mappop-wrap .leaflet-popup-content-wrapper, .fx-mappop__bar { animation: none; }
+}
+
+/* ---- Sağ üst: fixed lejant + navigasyon paneli ---- */
+.fx-lmap-panel {
+  /* Leaflet pane'leri (200–700) ve kontrolleri (1000) üstünde dursun; wrap'in isolation'ı
+     sayesinde bu yüksek z-index modal'ı etkilemez (modal hâlâ üstte). */
+  position: absolute; top: 12px; right: 12px; z-index: 1100;
+  display: flex; flex-direction: column; gap: 8px; align-items: flex-end;
+}
+.fx-lmap-legend {
+  background: rgba(8, 17, 11, 0.85);
+  border: 1px solid rgba(72, 215, 54, 0.22);
+  border-radius: 10px;
+  padding: 9px 11px;
+  display: flex; flex-direction: column; gap: 6px;
+  font-size: 11.5px; color: #dfffe9;
+  backdrop-filter: blur(3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+.fx-lmap-legend__row { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.fx-lmark-sw { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: none; }
+.fx-lmark-sw--hq { background: #48d736; box-shadow: 0 0 6px rgba(72, 215, 54, 0.8); }
+.fx-lmark-sw--active { background: #48d736; }
+.fx-lmark-sw--dist { background: #2fd4d4; box-shadow: 0 0 6px rgba(47, 212, 212, 0.7); }
+.fx-lmark-sw--planned { background: transparent; border: 1px dashed #48d736; }
+
+.fx-lmap-nav { display: flex; gap: 6px; }
+.fx-lmap-nav button {
+  width: 30px; height: 30px;
+  display: grid; place-items: center;
+  background: rgba(8, 17, 11, 0.85);
+  border: 1px solid rgba(72, 215, 54, 0.22);
+  border-radius: 8px;
+  color: #dfffe9; font-size: 16px; line-height: 1; cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+.fx-lmap-nav button:hover { background: rgba(72, 215, 54, 0.16); border-color: rgba(72, 215, 54, 0.45); }
+
+/* ---- Popup "Merkez Detayları" butonu ---- */
+.fx-mappop__btn {
+  margin-top: 11px;
+  width: 100%;
+  background: rgba(72, 215, 54, 0.14);
+  border: 1px solid rgba(72, 215, 54, 0.4);
+  color: #7ef06a;
+  font-weight: 700; font-size: 12px;
+  padding: 7px 10px; border-radius: 7px;
+  cursor: pointer; font-family: var(--fx-font-sans);
+  transition: background 0.12s;
+}
+.fx-mappop__btn:hover { background: rgba(72, 215, 54, 0.24); }
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-lmark--active, .fx-lmark--hq, .fx-lmark--dist { animation: none; }
+}

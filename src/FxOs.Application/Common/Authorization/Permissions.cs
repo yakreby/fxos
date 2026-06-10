@@ -116,6 +116,14 @@ public static class Permissions
         public const string Delete = "preaccounting.delete";
     }
 
+    public static class Facility
+    {
+        public const string View = "facility.view";
+        public const string Create = "facility.create";
+        public const string Update = "facility.update";
+        public const string Delete = "facility.delete";
+    }
+
     /// <summary>İzin matrisi için modül-bazlı gruplu katalog (etiketler Türkçe).</summary>
     public static IReadOnlyList<PermissionGroup> Catalog { get; } = new[]
     {
@@ -209,6 +217,13 @@ public static class Permissions
             new PermissionItem(PreAccounting.Create, "Oluşturma"),
             new PermissionItem(PreAccounting.Update, "Güncelleme"),
             new PermissionItem(PreAccounting.Delete, "Silme"),
+        }),
+        new PermissionGroup("Facility", "Dijital Tesis", new[]
+        {
+            new PermissionItem(Facility.View, "Görüntüleme"),
+            new PermissionItem(Facility.Create, "Oluşturma"),
+            new PermissionItem(Facility.Update, "Güncelleme"),
+            new PermissionItem(Facility.Delete, "Silme"),
         }),
     };
 

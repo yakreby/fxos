@@ -8,5 +8,17 @@
   },
   "Seed": {
     "AdminPassword": "YOUR_ADMIN_PASSWORD"
-  }
+  },
+
+  // R2'yi LOCAL'de test etmek isterseniz açın (varsayilan: yerel disk = Storage:Provider "local").
+  // Üretimde bu degerler sunucuda ORTAM DEGISKENI olarak verilir, bu dosyada degil.
+  // "Storage": {
+  //   "Provider": "r2",
+  //   "R2": {
+  //     "ServiceUrl": "https://<ACCOUNT_ID>.r2.cloudflarestorage.com",
+  //     "AccessKey": "<R2_ACCESS_KEY_ID>",
+  //     "SecretKey": "<R2_SECRET_ACCESS_KEY>",
+  //     "Bucket": "fxos"
+  //   }
+  // }
 }

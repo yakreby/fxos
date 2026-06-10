@@ -20,6 +20,8 @@ public sealed class FxOsDbContextFactory : IDesignTimeDbContextFactory<FxOsDbCon
             .SetBasePath(basePath)
             .AddJsonFile("appsettings.json", optional: true)
             .AddJsonFile("appsettings.Development.json", optional: true)
+            // Gerçek connection string gitignore'lı local override'da tutulur (secret hijyeni).
+            .AddJsonFile("appsettings.Development.local.json", optional: true)
             .Build();
 
         var connectionString = configuration.GetConnectionString("DefaultConnection");

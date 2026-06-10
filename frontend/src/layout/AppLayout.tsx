@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { Header } from './Header'
-import { AiBubble } from './AiBubble'
+// AiBubble (geçici AI asistan placeholder) sunum için gizlendi; gerçek asistan gelince geri açılacak.
+// import { AiBubble } from './AiBubble'
 import { findNavItem } from './nav-items'
 import { FxScrollTop } from '../fx-ui'
 
@@ -71,7 +72,7 @@ export function AppLayout() {
       <main className="fx-content" ref={contentRef}>
         <Outlet />
         <FxScrollTop targetRef={contentRef} />
-        <AiBubble />
+        {/* <AiBubble /> — sunum için gizlendi (placeholder); gerçek asistan gelince geri açılacak */}
       </main>
 
       {mobileOpen && (

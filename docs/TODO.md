@@ -1,6 +1,6 @@
 # FxOs — Yapılacaklar (TODO)
 
-> Son güncelleme: **2026-06-08** (Octabin + Separasyon modülleri standalone tamamlandı; bkz. D2 ve [`MODULES.md`](MODULES.md))
+> Son güncelleme: **2026-06-10** (Dijital Tesis Haritası modülü + sunum öncesi temizlik; bkz. G ve [`MODULES.md`](MODULES.md))
 > Öncelik: 🔴 yüksek · 🟡 orta · 🟢 düşük/sonra
 > Bağlam için bkz. [`HANDOFF.md`](HANDOFF.md).
 
@@ -40,7 +40,7 @@
 - [x] 🟡 **Notification** kalıcı bildirimleri API'ye bağlandı: `Notification` entity + `notifications.send` izni, kendi bildirimleri için liste/unread-count/okundu/read-all/sil; header menüsü ve `/notifications` sayfası gerçek API'de. *(Kalan: diğer modüllerden bildirim üretimi, gerçek-zamanlı/poll.)*
 - [x] 🟢 Rol bazlı **sidebar görünürlüğü**: `UserDto.Permissions` (login/me), `SessionContext.hasPermission`, nav öğelerinde `permission` + `visibleSections`. İzinsiz öğeler herkese görünür.
 - [ ] 🟢 Büyük logoları optimize et (`fxos-logo.png` 1.6MB, `logo-dark.png` 2.1MB → `.webp`/küçült).
-- [ ] 🟢 `index.html` favicon setini gözden geçir (manifest/ms-icon yolları).
+- [x] 🟢 `index.html` favicon setini gözden geçir: `manifest.json` linklendi + ad/açıklama/renkler markaya çekildi (`#48d736`/`#14171c`); `browserconfig.xml` ms-icon yolları `/images/favicon/` olarak düzeltildi (TileColor markaya). Tüm referanslar doğrulandı.
 - [x] 🟡 **FxTable yükleme iskeleti (preload):** veri gelene kadar animasyonlu skeleton satırları (server modda otomatik, client modda `loading` prop'u).
 - [x] 🔴 **FxCopyButton** (yeni fx-ui bileşeni) — değeri panoya kopyalar, kısa süre ✓ onayı (Clipboard API + textarea fallback). `fx-detail-item` içinde hover'da belirir; **Personnel** & **Cari** detaylarındaki `Item`'lara `copy` prop'u ile bağlandı (Ad Soyad/TC/E-posta/Telefon · Vergi No/Telefon/E-posta/Adres). fx-debug showcase'e eklendi. *(Genel `Item`/detay deseni yeni modüller geldikçe aynı prop'la sürdürülecek.)*
 - [x] 🟡 **View-specific placeholder'lar:** tüm placeholder modüller artık gerçek düzeni (kart/tablo/takvim/galeri) **veri olmadan** önizliyor. **Kit:** `modules/common/preview/` (`PreviewBanner`, `PreviewTable`, `PreviewCalendar`, `PreviewGallery`, `PreviewCards` — hepsi shimmer iskelet, mock yok). **Spec-driven:** `module-previews.ts` (nav key → kartlar + bölümler) + `ModulePreview`; `ModuleShell` spec varsa zengin önizleme, yoksa generic ekranı gösterir. Bespoke: Tesis Paneli + Masraf Yönetimi. Spec'li: çıkış/octabin/separasyon/randevu(takvim) · sevkiyat/talep/rota/lojistik/irsaliye/lokasyon/araç · sayım(takvim)/saha foto(galeri)/panorama(galeri)/nokta raporu · HACCP · izin/çalışma/personel masraf · belge/hatırlatma/rapor(kart)/SMS/mail. *(Modül gerçeklenince ModuleShell rotası gerçek sayfayla değişir.)*
@@ -100,7 +100,7 @@
 
 **Büyük modüller (önceliklendirilecek):**
 - [x] 🟡 **Excel/PDF dışa aktarma** — **ALTYAPI TAMAM + 3 modül bağlı.** Biçimden bağımsız `ExportTable` modeli + `IExportService` → `ExportService` (**CSV** yerleşik UTF-8 BOM/`;`; **Excel** ClosedXML; **PDF** QuestPDF). `IExportService` singleton. Ortak `ExportHelpers` (format parse, tarih aralığı etiketi, gün-sonu, tr-TR biçim). Controller `GET export` ucu (`from`/`to`/`status`/`format`) → `File(...)`. **Bağlı modüller:** Mal Kabul, Octabin, Separasyon. Frontend: yeniden kullanılabilir `modules/common/ExportButton` (tarih aralığı + format modalı) + `downloadFile` helper (blob + Content-Disposition'dan ad). Uçtan uca test: PDF/Excel/CSV 200 + doğru MIME. **Kalan:** diğer listelere ekle (Ürün, Stok hareketleri, Cari, Personel); **⚠️ QuestPDF Community lisansı** ticari kullanımda <$1M ciro şartı — Formex aşıyorsa lisans/PDFsharp'a geçiş (IExportService arkasında izole).
-- [ ] 🟡 **Dijital Tesis** (yeni sayfa) — **harita** üzerinde Formex toplama noktaları + tesis(ler); **İstanbul genel merkez**. Hiyerarşik drill-down (merkez → departmanlar). Tek arayüzden tüm operasyon görünümü. *(Lokasyon `Latitude`/`Longitude` ile bağlanır; Logistics/Location modülüyle kesişir.)*
+- [~] 🟡 **Dijital Tesis** — **Başladı (harita TAMAM).** `FacilityNode` entity (Genel Merkez/Toplama Merkezi/Tesis + Aktif/Planlı/Pasif + `Latitude`/`Longitude`) + `facility.*` izinleri + `FacilityController` (liste/CRUD/meta) + seeder (İstanbul GM + Tophisar/Bursa + 6 nokta) + `AddFacility` migration (remote DB). Frontend: **`TurkeyMap`** (inline SVG, sıfır dış bağımlılık, kendi equirectangular projeksiyonu, animasyonlu ağ + nabız düğümler + hover kartı), **Dashboard'a hero panel** olarak gömüldü. **Yönetim view'ı TAMAM** (Sevkiyat & Lojistik → "Lokasyon Haritası" / `/locations`): gerçek **Leaflet + CARTO dark** haritası (key yok), **tıkla→koordinat otomatik→nokta ekle** + düzenle/sil + tablo; sayfa lazy-load (Leaflet ayrı chunk). Uçtan uca CRUD test edildi. **Kalan:** gerçek `Location`/koordinat ile birleşme, hiyerarşik drill-down (merkez → departmanlar), bölge/il filtresi.
 - [ ] 🟡 **İK genişletme** — **CV havuzu** + **iş başvuruları** (başvuru formu/yönetimi); sonra **siteye bağlama** (public başvuru). Personnel modülünün üstüne.
 - [ ] 🟡 **İSG Yönetimi** (yeni başlık) — iş sağlığı & güvenliği: eğitim/kaza/risk kayıtları, belge takibi. *(Detay netleştirilecek.)*
 

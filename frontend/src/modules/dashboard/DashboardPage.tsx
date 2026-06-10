@@ -1,7 +1,16 @@
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FxStatCard, FxCard, FxBadge, FxButton, FxIcon, type FxIconName } from '../../fx-ui'
 import { useTheme } from '../../core/theme/ThemeContext'
 import { useSession } from '../../core/auth/SessionContext'
+import { listFacilityNodes, type FacilityNode } from '../facility/facility-api'
+// SVG harita (offline çalışır) yerine Leaflet'e geçildi. Geri dönmek için aşağıdaki satırı aç
+// ve render'daki <FacilityLeafletMap .../> yerine <TurkeyMap /> kullan.
+// import { TurkeyMap } from '../facility/TurkeyMap'
+// Leaflet ağır olduğundan harita lazy yüklenir (ana bundle'dan ayrı chunk).
+const FacilityLeafletMap = lazy(() =>
+  import('../facility/FacilityLeafletMap').then((m) => ({ default: m.FacilityLeafletMap })),
+)
 
 /**
  * Dashboard — genel bakış. Özet kartları + hızlı erişim + operasyon akışı + son işlemler.
@@ -52,6 +61,13 @@ export function DashboardPage() {
   const navigate = useNavigate()
   const formexLogo = theme === 'dark' ? '/images/logo.png' : '/images/logo-dark.png'
 
+  const [nodes, setNodes] = useState<FacilityNode[]>([])
+  useEffect(() => {
+    void listFacilityNodes().then((res) => {
+      if (res.succeeded && res.data) setNodes(res.data)
+    })
+  }, [])
+
   return (
     <>
       <div className="fx-page-head">
@@ -60,6 +76,26 @@ export function DashboardPage() {
           Saha toplama → mal kabul → ayrıştırma → geri kazanım/sevkiyat döngüsünün merkezî yönetimi
           {user?.name ? ` · Hoş geldin, ${user.name.split(' ')[0]}` : ''}
         </div>
+      </div>
+
+      <div style={{ marginBottom: 'var(--fx-space-6)' }}>
+        <FxCard
+          title="Dijital Tesis Haritası"
+          action={
+            <FxButton variant="ghost" size="sm" onClick={() => navigate('/facility-dashboard')}>
+              <FxIcon name="grid" size={16} /> Tesis Paneli
+            </FxButton>
+          }
+        >
+          <Suspense fallback={<div style={{ height: '60vh', minHeight: 440, display: 'grid', placeItems: 'center', color: '#9fb4a6', background: '#0b1410', borderRadius: 'var(--fx-radius-lg)', border: '1px solid rgba(72,215,54,0.18)' }}>Harita yükleniyor…</div>}>
+            <FacilityLeafletMap nodes={nodes} mode="view" onNodeDetails={() => navigate('/logistics-movements')} />
+          </Suspense>
+          <p className="fx-text-muted" style={{ margin: '12px 2px 0', fontSize: 13, lineHeight: 1.6 }}>
+            Formex genel merkezi (İstanbul), toplama merkezleri ve bölgesel dağıtım merkezleri tek
+            ekranda. Noktaların üzerine gelerek müşteri, palet, tonaj ve son plaka bilgilerini
+            görebilirsiniz; veriler ileride Sayım/Hareket modüllerinden beslenecek.
+          </p>
+        </FxCard>
       </div>
 
       <div className="fx-grid fx-grid--stats" style={{ marginBottom: 'var(--fx-space-6)' }}>

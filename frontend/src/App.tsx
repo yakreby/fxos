@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { ProtectedLayout } from './core/auth/ProtectedLayout'
 import { PublicOnlyRoute } from './core/auth/PublicOnlyRoute'
@@ -22,6 +23,10 @@ import { OctabinDetailPage } from './modules/octabins/OctabinDetailPage'
 import { SeparationsPage } from './modules/separations/SeparationsPage'
 import { SeparationDetailPage } from './modules/separations/SeparationDetailPage'
 import { FacilityDashboardPage } from './modules/facility/FacilityDashboardPage'
+// Leaflet ağır olduğundan harita yönetim sayfası lazy yüklenir (ana bundle'dan ayrı chunk).
+const FacilityMapPage = lazy(() =>
+  import('./modules/facility/FacilityMapPage').then((m) => ({ default: m.FacilityMapPage })),
+)
 import { ExpensesPage } from './modules/expenses/ExpensesPage'
 import { NotificationsPage } from './modules/notifications/NotificationsPage'
 import { LogsPage } from './modules/logs/LogsPage'
@@ -38,7 +43,7 @@ const PLACEHOLDER_KEYS = [
   'outbound', 'appointments',
   // Sevkiyat & Lojistik
   'shipment-planning', 'shipment-requests', 'route-planning', 'routes',
-  'logistics-movements', 'dispatch', 'locations', 'vehicles',
+  'logistics-movements', 'dispatch', 'vehicles',
   // Sayım & Saha
   'count-dashboard', 'counts', 'field-photos', 'panorama', 'point-reports',
   // Ürün & Tanımlar
@@ -91,6 +96,14 @@ export default function App() {
 
         {/* View-specific placeholder'lar (gerçek düzen, veri yok) */}
         <Route path="facility-dashboard" element={<FacilityDashboardPage />} />
+        <Route
+          path="locations"
+          element={
+            <Suspense fallback={<div className="fx-text-muted" style={{ padding: 24 }}>Harita yükleniyor…</div>}>
+              <FacilityMapPage />
+            </Suspense>
+          }
+        />
         <Route path="expenses" element={<ExpensesPage />} />
         <Route path="notifications" element={<NotificationsPage />} />
         <Route path="logs" element={<LogsPage />} />

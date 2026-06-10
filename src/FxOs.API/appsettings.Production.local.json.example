@@ -1,0 +1,25 @@
+{
+  // ÜRETİM SIRLARI. Bu dosyayi "appsettings.Production.local.json" olarak kopyalayip
+  // gercek degerlerle doldur, sonra SUNUCUYA (FTP ile) at. Repoya GIRMEZ (.gitignore:
+  // appsettings.*.local.json). ASPNETCORE_ENVIRONMENT=Production iken Program.cs otomatik yukler.
+  //
+  // Sadece SIR olan anahtarlari yaz; gerisi appsettings.json + appsettings.Production.json'dan gelir
+  // (CORS, cookie None/Secure, Storage:Provider=r2, ForwardedHeaders zaten orada).
+
+  "ConnectionStrings": {
+    "DefaultConnection": "Data Source=YOUR_PROD_SERVER;Initial Catalog=fxos_;User Id=YOUR_USER;Password=YOUR_PASSWORD;MultipleActiveResultSets=true;TrustServerCertificate=true;"
+  },
+
+  "Seed": {
+    "AdminPassword": "YOUR_PROD_ADMIN_PASSWORD"
+  },
+
+  "Storage": {
+    "R2": {
+      "ServiceUrl": "https://YOUR_ACCOUNT_ID.r2.cloudflarestorage.com",
+      "AccessKey": "YOUR_R2_ACCESS_KEY_ID",
+      "SecretKey": "YOUR_R2_SECRET_ACCESS_KEY",
+      "Bucket": "fxos"
+    }
+  }
+}

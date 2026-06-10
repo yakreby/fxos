@@ -62,7 +62,7 @@ export const NAV_SECTIONS: NavSection[] = [
           { key: 'routes', label: 'Rota Listesi', icon: 'package', soon: true, description: 'Planlanmış rotalar, durumları ve takibi.', planned: ['Rota listesi', 'Durum', 'Maliyet özeti'] },
           { key: 'logistics-movements', label: 'Lojistik Hareketleri', icon: 'activity', soon: true, description: 'Araç/sürücü bazlı lojistik hareket kayıtları.', planned: ['Hareket kayıtları', 'Araç/sürücü filtresi'] },
           { key: 'dispatch', label: 'İrsaliyeler', icon: 'file-text', soon: true, description: 'İrsaliye oluşturma, durum akışı, PDF ve karşılaştırma.', planned: ['İrsaliye oluştur', 'Durum (yolda/teslim)', 'PDF', 'Univera karşılaştırma'] },
-          { key: 'locations', label: 'Lokasyonlar / Noktalar', icon: 'map-pin', soon: true, description: 'Toplama noktaları ve tesis lokasyonlarının yönetimi.', planned: ['Nokta kayıtları', 'Bölge/il filtresi', 'Harita (ileride)'] },
+          { key: 'locations', label: 'Lokasyon Haritası', icon: 'map-pin', description: 'Tesis ve toplama noktalarının harita üzerinde yönetimi (tıkla-ekle, koordinat). Dashboard SVG haritasını besler.', permission: 'facility.view' },
           { key: 'vehicles', label: 'Araç & Sürücüler', icon: 'truck', soon: true, description: 'Araç filosu ve sürücü atamaları (sürücü = Personel).', planned: ['Araç kartı', 'Sürücü atama', 'Bakım takibi'] },
         ],
       },

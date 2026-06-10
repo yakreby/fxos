@@ -8,13 +8,13 @@ using FxOs.Infrastructure;
 using FxOs.Persistence;
 using FxOs.Persistence.Context;
 using FxOs.Persistence.Seed;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using FxOs.Shared.Results;
+using FxOs.Storage;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
-using FxOs.Shared.Results;
-using FxOs.Storage;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
@@ -30,9 +30,13 @@ try
 
     var builder = WebApplication.CreateBuilder(args);
 
-    // Yerel geliştirici override'ı (gitignore'lu): gerçek connection string / seed şifresi
-    // gibi gizli değerler bu dosyada tutulur, repoya girmez. Bkz. *.local.json.example.
-    builder.Configuration.AddJsonFile("appsettings.Development.local.json", optional: true, reloadOnChange: true);
+    // Ortam-bazlı gizli override (gitignore'lu): gerçek connection string, R2 kimlik bilgileri,
+    // seed şifresi gibi sırlar bu dosyada tutulur, repoya girmez. Dev'de
+    // "appsettings.Development.local.json", prod'da "appsettings.Production.local.json"
+    // (sunucuya FTP ile atılır). Bkz. *.local.json.example.
+    builder.Configuration.AddJsonFile(
+        $"appsettings.{builder.Environment.EnvironmentName}.local.json",
+        optional: true, reloadOnChange: true);
 
     // --- Serilog: appsettings'ten seviye/sink; DB hazırsa MSSQL sink'i de ekle ---
     builder.Host.UseSerilog((context, services, configuration) =>
@@ -82,14 +86,23 @@ try
     var expireDays = builder.Configuration.GetValue("Auth:ExpireDays", 7);
     var cookieName = builder.Configuration.GetValue("Auth:CookieName", "FxOs.Auth");
 
+    // SameSite/Secure config'den gelir: dev aynı-site (Lax/SameAsRequest); prod cross-site
+    // (frontend vercel.app ↔ API limanyazilim.com) için None/Always. Bkz. appsettings.Production.json.
+    var sameSiteMode = Enum.TryParse<SameSiteMode>(
+        builder.Configuration.GetValue("Auth:SameSite", "Lax"), ignoreCase: true, out var ss)
+        ? ss : SameSiteMode.Lax;
+    var cookieSecure = Enum.TryParse<CookieSecurePolicy>(
+        builder.Configuration.GetValue("Auth:SecurePolicy", "SameAsRequest"), ignoreCase: true, out var sp)
+        ? sp : CookieSecurePolicy.SameAsRequest;
+
     builder.Services
         .AddAuthentication(IdentityConstants.ApplicationScheme)
         .AddCookie(IdentityConstants.ApplicationScheme, options =>
         {
             options.Cookie.Name = cookieName;
             options.Cookie.HttpOnly = true;
-            options.Cookie.SameSite = SameSiteMode.Lax;          // dev: aynı site (localhost). Prod cross-site için None+Secure.
-            options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+            options.Cookie.SameSite = sameSiteMode;
+            options.Cookie.SecurePolicy = cookieSecure;
             options.ExpireTimeSpan = TimeSpan.FromDays(expireDays);
             options.SlidingExpiration = true;
 
@@ -109,6 +122,18 @@ try
     // İzin (permission) tabanlı yetkilendirme: "perm:{izin}" policy'lerini dinamik üret + claim kontrolü.
     builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
     builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
+    // --- Reverse proxy (Nginx/Apache) TLS sonlandırıyorsa scheme/IP'yi forwarded header'dan al ---
+    // IIS/ANCM ile gerekmez (otomatik). ForwardedHeaders:Enabled ile açılır (prod'da true).
+    if (builder.Configuration.GetValue("ForwardedHeaders:Enabled", false))
+    {
+        builder.Services.Configure<ForwardedHeadersOptions>(o =>
+        {
+            o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            o.KnownNetworks.Clear();
+            o.KnownProxies.Clear();
+        });
+    }
 
     // --- CORS: frontend origin + kimlik bilgileriyle (cookie) ---
     var allowedOrigins = builder.Configuration
@@ -163,6 +188,7 @@ try
         {
             await IdentityDataSeeder.SeedAsync(scope.ServiceProvider);
             await DefinitionSeeder.SeedAsync(scope.ServiceProvider);
+            await FacilityNodeSeeder.SeedAsync(scope.ServiceProvider);
         }
         catch (Exception seedEx)
         {
@@ -172,6 +198,10 @@ try
     }
 
     // --- HTTP pipeline ---
+    // Forwarded header'lar en başta işlenmeli (sonraki her şey doğru scheme/IP görsün).
+    if (app.Configuration.GetValue("ForwardedHeaders:Enabled", false))
+        app.UseForwardedHeaders();
+
     app.UseMiddleware<ExceptionHandlingMiddleware>();
     app.UseSerilogRequestLogging();
     app.UseResponseCompression();

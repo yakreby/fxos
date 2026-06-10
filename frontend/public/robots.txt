@@ -1,0 +1,3 @@
+# FxOs — özel/iç operasyon sistemi. Arama motorlarına tamamen kapalı.
+User-agent: *
+Disallow: /

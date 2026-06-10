@@ -1,12 +1,12 @@
 {
-    "name": "Formex",
+    "name": "FxOs — Formex Operations System",
     "lang": "tr",
-    "short_name": "Formex",
-    "description": "Formex",
+    "short_name": "FxOs",
+    "description": "Formex saha operasyon yönetim sistemi (ERP + CRM).",
     "start_url": "/",
     "orientation": "portrait-primary",
-    "background_color": "#00DB42",
-    "theme_color": "#00DB42",
+    "background_color": "#14171c",
+    "theme_color": "#48d736",
     "display": "standalone",
     "version": "0.2",
     "icons": [
