@@ -187,7 +187,6 @@
   width: 38px;
   height: 38px;
   border-radius: var(--fx-radius-md);
-  background: var(--fx-badge-bg);
   object-fit: cover;
   flex-shrink: 0;
 }
@@ -298,7 +297,7 @@
   background: var(--fx-surface);
 }
 .fx-usermenu__meta { line-height: 1.2; }
-.fx-usermenu__name { font-size: 13.5px; font-weight: 600; }
+.fx-usermenu__name { font-size: 13.5px; font-weight: 600; color: var(--fx-text); }
 .fx-usermenu__role { font-size: 11.5px; color: var(--fx-text-muted); }
 
 /* Content */
@@ -1045,7 +1044,7 @@
 }
 .fx-login__card { width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 18px; }
 .fx-login__brand { display: flex; align-items: center; gap: 12px; }
-.fx-login__brand-logo { width: 44px; height: 44px; border-radius: var(--fx-radius-md); background: var(--fx-badge-bg); }
+.fx-login__brand-logo { width: 44px; height: 44px; border-radius: var(--fx-radius-md); }
 .fx-login__title { font-size: 22px; font-weight: 800; }
 .fx-login__sub { color: var(--fx-text-muted); font-size: 14px; margin-top: 2px; }
 @media (max-width: 880px) {
@@ -1105,3 +1104,24 @@
   font-size: 12.5px;
   color: var(--fx-brand);
 }
+
+/* ---------------- Login: copyright + beni hatırla ---------------- */
+.fx-login__hero-copy { color: #c9d2cb; font-size: 13.5px; }
+.fx-login__hero-copy a { color: var(--fx-brand); text-decoration: none; font-weight: 600; }
+.fx-login__hero-copy a:hover { text-decoration: underline; }
+.fx-login__remember {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13.5px; color: var(--fx-text-muted);
+  cursor: pointer; user-select: none;
+}
+.fx-login__remember input {
+  width: 16px; height: 16px;
+  accent-color: var(--fx-brand);
+  cursor: pointer;
+}
+
+/* ---------------- Grafik bileşenleri (FxDonut / FxAreaChart) ---------------- */
+.fx-donut__val { fill: var(--fx-text); font-size: 20px; font-weight: 800; }
+.fx-donut__sub { fill: var(--fx-text-muted); font-size: 10.5px; font-weight: 600; }
+.fx-area { display: block; }
+.fx-sparkline { display: block; }

@@ -11,6 +11,7 @@ export function LoginPage() {
   const toast = useToast()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [rememberMe, setRememberMe] = useState(true)
   const [submitting, setSubmitting] = useState(false)
 
   const handleSubmit = async (e: FormEvent) => {
@@ -18,7 +19,7 @@ export function LoginPage() {
     if (submitting) return
     setSubmitting(true)
     try {
-      const result = await login(email, password)
+      const result = await login(email, password, rememberMe)
       if (result.ok) {
         toast.success('Giriş başarılı. Hoş geldin!', { title: 'FxOs' })
       } else {
@@ -32,13 +33,14 @@ export function LoginPage() {
   return (
     <div className="fx-login">
       <div className="fx-login__hero">
-        <img className="fx-login__hero-logo" src="/images/fxos-logo.png" alt="FxOs" />
+        <img className="fx-login__hero-logo" src="/images/fxos-logo-transparent.png" alt="FxOs" />
         <div className="fx-login__hero-title">
           <span className="fx-text-brand">Fx</span>Os
         </div>
-        <div className="fx-login__hero-text">
-          Formex saha operasyonlarını tek panelden yönet: lojistik, irsaliye, belge,
-          personel ve daha fazlası. Ölçeklenebilir, takip edilebilir, kusursuz.
+        <div className="fx-login__hero-copy">
+          © {new Date().getFullYear()}{' '}
+          <a href="https://formexgroup.com" target="_blank" rel="noopener noreferrer">Formex Group</a>
+          {' · '}Tüm hakları saklıdır
         </div>
         <div className="fx-login__hero-foot">
           <FxIcon name="shield" size={16} /> Güvenli oturum · zero-waste operasyon
@@ -48,7 +50,7 @@ export function LoginPage() {
       <div className="fx-login__form-side">
         <form className="fx-login__card" onSubmit={handleSubmit}>
           <div className="fx-login__brand">
-            <img className="fx-login__brand-logo" src="/images/fxos-logo.png" alt="" />
+            <img className="fx-login__brand-logo" src="/images/fxos-logo-transparent.png" alt="" />
             <div>
               <div className="fx-login__title">Giriş Yap</div>
               <div className="fx-login__sub">Hesabınla panele eriş</div>
@@ -84,6 +86,16 @@ export function LoginPage() {
               disabled={submitting}
             />
           </div>
+
+          <label className="fx-login__remember">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              disabled={submitting}
+            />
+            <span>Beni hatırla</span>
+          </label>
 
           <FxButton type="submit" variant="primary" disabled={submitting}>
             <FxIcon name="log-out" size={17} style={{ transform: 'rotate(180deg)' }} />

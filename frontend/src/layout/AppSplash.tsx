@@ -5,7 +5,7 @@
 export function AppSplash() {
   return (
     <div className="fx-app-splash">
-      <img className="fx-app-splash__logo" src="/images/fxos-logo.png" alt="FxOs" />
+      <img className="fx-app-splash__logo" src="/images/fxos-logo-transparent.png" alt="FxOs" />
       <div className="fx-app-splash__text">Yükleniyor…</div>
     </div>
   )

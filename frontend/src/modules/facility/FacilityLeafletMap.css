@@ -186,3 +186,12 @@
 @media (prefers-reduced-motion: reduce) {
   .fx-lmark--active, .fx-lmark--hq, .fx-lmark--dist { animation: none; }
 }
+
+/* ---- Bağlantı arc'ları (GM ağı + akan transfer hatları) ---- */
+.fx-arc { pointer-events: none; }
+.fx-arc--active {
+  filter: drop-shadow(0 0 3px rgba(72, 215, 54, 0.6));
+  animation: fx-arc-flow 1.4s linear infinite;
+}
+@keyframes fx-arc-flow { to { stroke-dashoffset: -13; } }
+@media (prefers-reduced-motion: reduce) { .fx-arc--active { animation: none; } }

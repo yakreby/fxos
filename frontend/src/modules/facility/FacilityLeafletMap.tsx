@@ -30,6 +30,8 @@ interface FacilityLeafletMapProps {
   onMarkerClick?: (node: FacilityNode) => void
   /** 'view' modunda istatistik kartındaki "Merkez Detayları" butonu. */
   onNodeDetails?: (node: FacilityNode) => void
+  /** 'view' modunda bir noktaya tıklanınca (sağ panele yansıtmak için). */
+  onSelect?: (node: FacilityNode) => void
 }
 
 function markerClass(node: FacilityNode): string {
@@ -39,13 +41,37 @@ function markerClass(node: FacilityNode): string {
   return 'fx-lmark fx-lmark--active'
 }
 
-export function FacilityLeafletMap({ nodes, mode = 'manage', onMapClick, onMarkerClick, onNodeDetails }: FacilityLeafletMapProps) {
+/**
+ * İki nokta arası eğri (quadratic bezier) için ara latlng noktaları üretir.
+ * Orta nokta, çizgiye dik yönde `bend` oranında kaldırılır → kavisli "ağ/transfer" hattı.
+ */
+function arcLatLngs(a: FacilityNode, b: FacilityNode, bend: number): [number, number][] {
+  const dLat = b.latitude - a.latitude
+  const dLng = b.longitude - a.longitude
+  const cLat = (a.latitude + b.latitude) / 2 + -dLng * bend
+  const cLng = (a.longitude + b.longitude) / 2 + dLat * bend
+  const pts: [number, number][] = []
+  const N = 28
+  for (let i = 0; i <= N; i++) {
+    const t = i / N
+    const u = 1 - t
+    pts.push([
+      u * u * a.latitude + 2 * u * t * cLat + t * t * b.latitude,
+      u * u * a.longitude + 2 * u * t * cLng + t * t * b.longitude,
+    ])
+  }
+  return pts
+}
+
+export function FacilityLeafletMap({ nodes, mode = 'manage', onMapClick, onMarkerClick, onNodeDetails, onSelect }: FacilityLeafletMapProps) {
   const elRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<L.Map | null>(null)
   const layerRef = useRef<L.LayerGroup | null>(null)
+  const arcLayerRef = useRef<L.LayerGroup | null>(null)
   const clickRef = useRef(onMapClick)
   const markerClickRef = useRef(onMarkerClick)
   const detailsRef = useRef(onNodeDetails)
+  const selectRef = useRef(onSelect)
   const openNodeRef = useRef<FacilityNode | null>(null)
   const isManage = mode === 'manage'
 
@@ -54,6 +80,7 @@ export function FacilityLeafletMap({ nodes, mode = 'manage', onMapClick, onMarke
     clickRef.current = onMapClick
     markerClickRef.current = onMarkerClick
     detailsRef.current = onNodeDetails
+    selectRef.current = onSelect
   })
 
   // Harita kurulumu (bir kez)
@@ -89,6 +116,7 @@ export function FacilityLeafletMap({ nodes, mode = 'manage', onMapClick, onMarke
     }
     el.addEventListener('click', onElClick)
 
+    arcLayerRef.current = L.layerGroup().addTo(map) // arc'lar marker'ların ALTINDA
     layerRef.current = L.layerGroup().addTo(map)
     mapRef.current = map
     requestAnimationFrame(() => map.invalidateSize())
@@ -97,8 +125,44 @@ export function FacilityLeafletMap({ nodes, mode = 'manage', onMapClick, onMarke
       map.remove()
       mapRef.current = null
       layerRef.current = null
+      arcLayerRef.current = null
     }
   }, [isManage])
+
+  // Bağlantı arc'larını çiz (yalnız görüntüleme modu): GM→merkez ağ (soluk) + akan transferler.
+  useEffect(() => {
+    const arcLayer = arcLayerRef.current
+    if (!arcLayer) return
+    arcLayer.clearLayers()
+    if (isManage) return
+
+    const hq = nodes.find((n) => n.nodeType === 0)
+    const centers = nodes.filter((n) => n.nodeType !== 0 && n.status === 0)
+
+    // Hub-and-spoke: GM'den her aktif merkeze soluk sabit ağ hattı.
+    if (hq) {
+      for (const c of centers) {
+        L.polyline(arcLatLngs(hq, c, 0.15), {
+          color: '#48d736', weight: 1, opacity: 0.16, interactive: false, className: 'fx-arc',
+        }).addTo(arcLayer)
+      }
+    }
+
+    // Aktif transfer: birkaç merkez→merkez akan (animasyonlu) hat.
+    if (centers.length > 1) {
+      const half = Math.floor(centers.length / 2)
+      for (let i = 0; i < centers.length; i += 3) {
+        const a = centers[i]
+        const b = centers[(i + half) % centers.length]
+        if (a && b && a.id !== b.id) {
+          L.polyline(arcLatLngs(a, b, 0.22), {
+            color: '#48d736', weight: 1.6, opacity: 0.75, dashArray: '4 9',
+            interactive: false, className: 'fx-arc fx-arc--active',
+          }).addTo(arcLayer)
+        }
+      }
+    }
+  }, [nodes, isManage])
 
   // Marker'ları senkronize et (nodes değişince)
   useEffect(() => {
@@ -130,6 +194,7 @@ export function FacilityLeafletMap({ nodes, mode = 'manage', onMapClick, onMarke
         })
         marker.on('click', () => {
           openNodeRef.current = n
+          selectRef.current?.(n)
           map.setView([n.latitude, n.longitude], Math.max(map.getZoom(), 7), { animate: true })
           marker.openPopup()
         })

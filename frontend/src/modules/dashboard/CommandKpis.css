@@ -1,0 +1,36 @@
+/* Komuta merkezi KPI şeridi — tema değişkenleriyle (light/dark uyumlu). */
+.fx-kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+}
+.fx-kpi {
+  background: var(--fx-surface);
+  border: 1px solid var(--fx-border);
+  border-radius: var(--fx-radius-lg);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--fx-shadow);
+}
+.fx-kpi__top { display: flex; align-items: center; justify-content: space-between; }
+.fx-kpi__icon {
+  width: 30px; height: 30px; border-radius: 8px;
+  display: grid; place-items: center;
+  background: var(--fx-accent-soft); color: var(--fx-brand);
+}
+.fx-kpi--teal .fx-kpi__icon { color: #2fd4d4; background: rgba(47, 212, 212, 0.12); }
+.fx-kpi__trend { font-size: 11.5px; font-weight: 700; }
+.fx-kpi__trend.is-up { color: var(--fx-success); }
+.fx-kpi__trend.is-down { color: var(--fx-danger); }
+.fx-kpi__value { font-size: 22px; font-weight: 800; color: var(--fx-text); margin-top: 8px; line-height: 1.1; }
+.fx-kpi__label { font-size: 12.5px; color: var(--fx-text-muted); margin-top: 2px; }
+.fx-kpi__spark { margin-top: 10px; }
+.fx-sparkline { display: block; }
+
+@media (max-width: 1100px) {
+  .fx-kpi-strip { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .fx-kpi-strip { grid-template-columns: 1fr; }
+}

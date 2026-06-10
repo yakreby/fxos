@@ -90,7 +90,7 @@ export function Sidebar({ activeKey, onNavigate, collapsed, onExpand }: SidebarP
   return (
     <aside className="fx-sidebar">
       <div className="fx-sidebar__brand">
-        <img className="fx-sidebar__logo" src="/images/fxos-logo.png" alt="FxOs" />
+        <img className="fx-sidebar__logo" src="/images/fxos-logo-transparent.png" alt="FxOs" />
         <span className="fx-sidebar__wordmark">
           <span className="fx-text-brand">Fx</span>Os
         </span>
